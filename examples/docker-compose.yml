@@ -1,0 +1,25 @@
+version: "3.9"
+services:
+
+  config-writer:
+    image: herrdommel/config-writer:latest
+    environment:
+      - "configs=xxx,yyy"
+      - "config_xxx=IyBjb25maWcgZmlsZSBjb250ZW50IHh4eApOQU1FPWZvbwpPVVRQVVQ9aGVsbG8gZm9vCg=="
+      - "config_xxx_location=/opt/app/xxx"
+      - "config_yyy=IyBjb25maWcgZmlsZSBjb250ZW50IHl5eQpOQU1FPWJhcgpPVVRQVVQ9aGVsbG8gYmFyCg=="
+      - "config_yyy_location=/opt/app/yyy"
+    volumes:
+      - config:/opt/app
+
+  config-consumer:
+    image: bash:latest
+    volumes:
+      - config:/opt/app
+    command: bash -c "cat /opt/app/xxx && cat /opt/app/yyy"
+    depends_on:
+      config-writer:
+        condition: service_completed_successfully
+
+volumes:
+  config:
